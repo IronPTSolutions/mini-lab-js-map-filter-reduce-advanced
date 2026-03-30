@@ -355,7 +355,7 @@ Usa `.reduce()`. Para cada objeto, lee `obj[groupKey]` como clave y suma `obj[va
 Cuando todas las funciones esten implementadas correctamente, deberas ver en el navegador:
 
 ```
-15 specs, 0 failures
+55 specs, 0 failures
 ```
 
 Todas las barras en verde. Sin excepciones.
