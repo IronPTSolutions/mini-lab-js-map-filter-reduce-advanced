@@ -14,7 +14,14 @@
 //   chunk([1, 2, 3, 4, 5], 2) → [[1, 2], [3, 4], [5]]
 //   chunk(["a", "b", "c", "d"], 3) → [["a", "b", "c"], ["d"]]
 function chunk(array, size) {
-  // Tu codigo aqui
+  return array.reduce(function (acc, item, index) {
+    if (index % size === 0) {
+      acc.push([item]);
+    } else {
+      acc[acc.length - 1].push(item);
+    }
+    return acc;
+  }, []);
 }
 
 // 2. zip(arr1, arr2)
@@ -25,7 +32,10 @@ function chunk(array, size) {
 //   zip(["a", "b", "c"], [1, 2, 3]) → [["a", 1], ["b", 2], ["c", 3]]
 //   zip([1, 2], ["x", "y", "z"]) → [[1, "x"], [2, "y"]]
 function zip(arr1, arr2) {
-  // Tu codigo aqui
+  var minLength = Math.min(arr1.length, arr2.length);
+  return arr1.slice(0, minLength).map(function (item, index) {
+    return [item, arr2[index]];
+  });
 }
 
 // 3. intersection(arr1, arr2)
@@ -35,7 +45,9 @@ function zip(arr1, arr2) {
 //   intersection([1, 2, 3, 4], [3, 4, 5, 6]) → [3, 4]
 //   intersection([1, 1, 2, 2], [2, 2, 3, 3]) → [2]
 function intersection(arr1, arr2) {
-  // Tu codigo aqui
+  return arr1.filter(function (item, index) {
+    return arr2.indexOf(item) !== -1 && arr1.indexOf(item) === index;
+  });
 }
 
 // =============================================================================
@@ -50,7 +62,19 @@ function intersection(arr1, arr2) {
 //   frequencies(["js", "py", "js", "go", "js", "py"])
 //   → [{ value: "js", count: 3 }, { value: "py", count: 2 }, { value: "go", count: 1 }]
 function frequencies(array) {
-  // Tu codigo aqui
+  var counts = array.reduce(function (acc, item) {
+    acc[item] = (acc[item] || 0) + 1;
+    return acc;
+  }, {});
+
+  return Object.keys(counts)
+    .map(function (key) {
+      var value = isNaN(Number(key)) || array.indexOf(Number(key)) === -1 ? key : Number(key);
+      return { value: value, count: counts[key] };
+    })
+    .sort(function (a, b) {
+      return b.count - a.count;
+    });
 }
 
 // 5. pluck(array, path)
@@ -62,7 +86,12 @@ function frequencies(array) {
 //   → ["Ana", "Luis"]
 //   pluck([{ a: 1 }, { a: 2 }, { a: 3 }], "a") → [1, 2, 3]
 function pluck(array, path) {
-  // Tu codigo aqui
+  var keys = path.split(".");
+  return array.map(function (obj) {
+    return keys.reduce(function (current, key) {
+      return current !== undefined && current !== null ? current[key] : undefined;
+    }, obj);
+  });
 }
 
 // 6. mapValues(obj, fn)
@@ -73,7 +102,10 @@ function pluck(array, path) {
 //   mapValues({ a: 1, b: 2, c: 3 }, x => x * 10) → { a: 10, b: 20, c: 30 }
 //   mapValues({ name: "ana", city: "madrid" }, s => s.toUpperCase()) → { name: "ANA", city: "MADRID" }
 function mapValues(obj, fn) {
-  // Tu codigo aqui
+  return Object.keys(obj).reduce(function (acc, key) {
+    acc[key] = fn(obj[key]);
+    return acc;
+  }, {});
 }
 
 // =============================================================================
@@ -88,7 +120,10 @@ function mapValues(obj, fn) {
 //   transformKeys({ firstName: "Ana", lastName: "Garcia" }, key => key.toLowerCase())
 //   → { firstname: "Ana", lastname: "Garcia" }
 function transformKeys(obj, fn) {
-  // Tu codigo aqui
+  return Object.keys(obj).reduce(function (acc, key) {
+    acc[fn(key)] = obj[key];
+    return acc;
+  }, {});
 }
 
 // 8. getStatistics(numbers)
@@ -99,7 +134,14 @@ function transformKeys(obj, fn) {
 //   getStatistics([2, 4, 6, 8, 10])
 //   → { min: 2, max: 10, sum: 30, average: 6, count: 5 }
 function getStatistics(numbers) {
-  // Tu codigo aqui
+  var sum = numbers.reduce(function (acc, n) { return acc + n; }, 0);
+  return {
+    min: Math.min.apply(null, numbers),
+    max: Math.max.apply(null, numbers),
+    sum: sum,
+    average: sum / numbers.length,
+    count: numbers.length
+  };
 }
 
 // 9. partitionBy(array, fn)
@@ -110,7 +152,14 @@ function getStatistics(numbers) {
 //   partitionBy([1, 2, 3, 4, 5, 6], n => n % 2 === 0)
 //   → [[2, 4, 6], [1, 3, 5]]
 function partitionBy(array, fn) {
-  // Tu codigo aqui
+  return array.reduce(function (acc, item) {
+    if (fn(item)) {
+      acc[0].push(item);
+    } else {
+      acc[1].push(item);
+    }
+    return acc;
+  }, [[], []]);
 }
 
 // =============================================================================
@@ -136,7 +185,14 @@ function partitionBy(array, fn) {
 //       verdura: [{ type: "verdura", name: "zanahoria" }]
 //     }
 function groupBy(array, key) {
-  // Tu codigo aqui
+  return array.reduce(function (acc, item) {
+    var group = item[key];
+    if (!acc[group]) {
+      acc[group] = [];
+    }
+    acc[group].push(item);
+    return acc;
+  }, {});
 }
 
 // 11. buildLookupTable(array, key)
@@ -147,7 +203,10 @@ function groupBy(array, key) {
 //   buildLookupTable([{ id: 1, name: "Ana" }, { id: 2, name: "Luis" }], "id")
 //   → { 1: { id: 1, name: "Ana" }, 2: { id: 2, name: "Luis" } }
 function buildLookupTable(array, key) {
-  // Tu codigo aqui
+  return array.reduce(function (acc, item) {
+    acc[item[key]] = item;
+    return acc;
+  }, {});
 }
 
 // 12. pivot(array)
@@ -159,7 +218,16 @@ function buildLookupTable(array, key) {
 //   pivot([{ name: "Ana", age: 25 }, { name: "Luis", age: 30 }])
 //   → { name: ["Ana", "Luis"], age: [25, 30] }
 function pivot(array) {
-  // Tu codigo aqui
+  if (array.length === 0) return {};
+  return array.reduce(function (acc, obj) {
+    Object.keys(obj).forEach(function (key) {
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(obj[key]);
+    });
+    return acc;
+  }, {});
 }
 
 // =============================================================================
@@ -174,7 +242,9 @@ function pivot(array) {
 //   flatMap([[1, 2], [3, 4]], arr => arr.map(n => n * 2)) → [2, 4, 6, 8]
 //   flatMap(["hola mundo", "foo bar"], s => s.split(" ")) → ["hola", "mundo", "foo", "bar"]
 function flatMap(array, fn) {
-  // Tu codigo aqui
+  return array.map(fn).reduce(function (acc, item) {
+    return acc.concat(item);
+  }, []);
 }
 
 // 14. topN(array, key, n)
@@ -189,7 +259,10 @@ function flatMap(array, fn) {
 //   )
 //   → [{ name: "B", score: 95 }, { name: "A", score: 80 }]
 function topN(array, key, n) {
-  // Tu codigo aqui
+  return array
+    .slice()
+    .sort(function (a, b) { return b[key] - a[key]; })
+    .slice(0, n);
 }
 
 // 15. summarizeBy(array, groupKey, valueKey)
@@ -209,5 +282,9 @@ function topN(array, key, n) {
 //   )
 //   → { Ana: 250, Luis: 200 }
 function summarizeBy(array, groupKey, valueKey) {
-  // Tu codigo aqui
+  return array.reduce(function (acc, item) {
+    var group = item[groupKey];
+    acc[group] = (acc[group] || 0) + item[valueKey];
+    return acc;
+  }, {});
 }
